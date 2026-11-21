@@ -34,24 +34,41 @@ python train.py --model gpt --n_layer 6 --n_head 6 --n_embd 384 --block_size 256
 
 ## Results
 
-Measured on CPU with Tiny Shakespeare, seed 1337, and the settings shown below. The GPT run uses a
-smaller configuration and fewer evaluation batches than the bigram run to keep CPU training practical;
-the results are illustrative, not a controlled comparison of model size or training budget.
+Measured on CPU with Tiny Shakespeare, seed 1337, and matched training/evaluation budgets: both models
+ran for 3,000 iterations and used 50 batches per evaluation. The GPT used the default 4-layer, 4-head,
+128-dimensional configuration.
 
 | Model | Params | Val loss | Val perplexity | Train time (s) |
 |---|---|---|---|---|
 | bigram | 4,225 | 2.5063 | 12.26 | 12 |
-| gpt | 111,296 | 2.2223 | 9.23 | 98 |
+| gpt | 813,440 | 1.5514 | 4.72 | 2,998 |
 
 ![curves](results.png)
 
 ## Notes / what I learned
-- With the measured settings, GPT reduced validation loss by about 11% relative to the bigram baseline
-  (2.2223 vs. 2.5063) and validation perplexity from 12.26 to 9.23, at the cost of more training time.
-- The GPT benchmark used 2 layers, 2 heads, 64 embedding dimensions, batch size 16, 1,000 iterations,
-  and 10 batches per evaluation. The bigram baseline used the default batch size and 3,000 iterations.
-- Both runs used block size 128, dropout 0.1, and seed 1337. Training times are specific to this CPU
-  environment; use the larger configuration in Quickstart for a stronger GPT model, preferably on GPU.
+- At the same 3,000 training iterations and 50 evaluation batches, GPT lowered validation loss from
+  2.5063 to 1.5514 and perplexity from 12.26 to 4.72 compared with the context-free bigram baseline.
+- The GPT has 813,440 parameters versus 4,225 for bigram and took about 2,998 seconds on this CPU;
+  training time is hardware-dependent. Both runs used seed 1337, block size 128, and dropout 0.1.
+
+## Generated sample
+
+Sampled from the trained GPT checkpoint with temperature 0.8 and top-k 40:
+
+```text
+CAMILLO:
+My provereity, sir, one good could no man there;
+And I must not be could not him conjure
+To poor such his prayer speak of countent both
+Be speak on the nature of with me lies
+My move, and so fine any to the each.
+
+Second Murderer:
+Never for the lord.
+
+LADY ANNE:
+O, what she would I warrants, and let the partly?
+```
 
 ## Ideas to extend
 - Ablations: remove positional embeddings, vary heads/layers, swap in RoPE
