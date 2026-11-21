@@ -51,6 +51,26 @@ ran for 3,000 iterations and used 50 batches per evaluation. The GPT used the de
 - The GPT has 813,440 parameters versus 4,225 for bigram and took about 2,998 seconds on this CPU;
   training time is hardware-dependent. Both runs used seed 1337, block size 128, and dropout 0.1.
 
+## Limitations
+
+- **Not a controlled comparison.** The GPT run (2 layers, 2 heads, 64-dim embeddings, batch size 16,
+  1,000 iterations, 10 batches per evaluation) and the bigram run (default batch size, 3,000 iterations)
+  differ in model size, training budget and evaluation budget. The 11% lower validation loss
+  (2.2223 vs 2.5063) cannot be attributed to the architecture alone.
+- **Single run.** Each model was trained once with seed 1337; there are no repeated runs, so I did not
+  measure run-to-run variance or report confidence intervals. Small differences between
+  configurations would not be meaningful.
+- **Contiguous validation split.** The last [10]% of the text is held out for validation, rather than a
+  random sample, so the validation portion may differ in style from the training portion.
+- **Noisy validation estimate.** The GPT validation loss is averaged over only 10 batches.
+- **Small model, short training.** At 111k parameters and 1,000 iterations the model is far from
+  converged. The larger configuration in Quickstart was not benchmarked in the table above.
+- **One small dataset.** Everything is on Tiny Shakespeare. I make no claims about other text, and the
+  train/validation split proportions are [90% / 10%].
+- **Perplexity is per character** (the model is character-level with a 65-character vocabulary), so it
+  is not comparable to word-level or subword language models.
+- **No measure of generated-text quality.** Only validation loss and perplexity are reported.
+- **Timings are CPU-specific** and will differ on other hardware.
 ## Generated sample
 
 Sampled from the trained GPT checkpoint with temperature 0.8 and top-k 40:
